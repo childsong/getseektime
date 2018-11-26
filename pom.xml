@@ -8,5 +8,18 @@
     <artifactId>getseektime</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.iq80.leveldb</groupId>
+            <artifactId>leveldb</artifactId>
+            <version>0.10</version>
+        </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.yahoo.datasketches/sketches-core -->
+        <dependency>
+            <groupId>com.yahoo.datasketches</groupId>
+            <artifactId>sketches-core</artifactId>
+            <version>0.12.0</version>
+        </dependency>
+    </dependencies>
 </project>

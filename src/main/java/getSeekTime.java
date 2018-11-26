@@ -1,3 +1,7 @@
+import org.iq80.leveldb.DB;
+import org.iq80.leveldb.Options;
+import org.iq80.leveldb.impl.Iq80DBFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -12,46 +16,53 @@ import java.util.Random;
 public class getSeekTime {
 
     public static String  path="F:\\test.txt";
-    public static long num=50000000L;
+    public static long num=5000000L;
 
-    public static int testnum=50000;
+    public static int testnum=5000000;
 
 
     public static void main(String[] args) throws IOException {
         // TODO Auto-generated method stub
+        write();
         seek();
     }
 
     public static void write() throws IOException{
-        File file=new File(path);
-        if(!file.exists())
-            file.createNewFile();
-        RandomAccessFile raf=new RandomAccessFile(file,"rw");
-        byte[] x=new byte[1024];
-        for(long i=0;i<num;i++)
-            raf.write(x);
-        raf.close();
-    }
-
-
-    public static void seek() throws IOException{
-        System.out.println("bn");
-        File file=new File(path);
-        RandomAccessFile raf=new RandomAccessFile(file,"rw");
-        long begin=System.currentTimeMillis();
-        for(int i=0;i<testnum;i++){
-            Random r=new Random();
-            long l=r.nextLong();
-            l=l%(num*1024);
-            if(l<0)
-                l=0-l;
-            raf.seek(l);
-            byte[] w=new byte[1];
-            raf.read(w);//读取一字节，时间可忽略
+        String filePath="data/";
+        DB db = Iq80DBFactory.factory.open((new File(filePath,"db/")),new Options().createIfMissing(true));
+        for(int i=0;i<num;i++){
+            byte[] bytes=(""+i).getBytes();
+            byte[] bytesValue="a".getBytes();
+            db.put(bytes,bytesValue);
         }
-        long end=System.currentTimeMillis();
-        System.out.println((end-begin)/testnum); // 结果可能是0，因为精度不够
+
+        byte[] bytes=new byte[testnum];
+        db.put("test".getBytes(),bytes);
+        db.close();
+
     }
 
 
+    public static void seek() throws IOException {
+        String filePath = "data/";
+        DB db = Iq80DBFactory.factory.open((new File(filePath, "db/")), new Options().createIfMissing(true));
+        for (int i = 0; i < 5; i++) {
+
+            CurrentTimeUtil.setStartTime();
+            db.get("test".getBytes());
+            CurrentTimeUtil.setEndTime();
+            CurrentTimeUtil.showExecuteTime(i+"-seq:");
+
+            CurrentTimeUtil.setStartTime();
+            for(int j=0;j<testnum;j++){
+                // 随机读
+                byte[] getValuebyte=db.get((""+j).getBytes());
+            }
+            CurrentTimeUtil.setEndTime();
+            CurrentTimeUtil.showExecuteTime(i+"-random:");
+
+
+        }
+        db.close();
+    }
 }
