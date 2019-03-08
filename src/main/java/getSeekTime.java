@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Random;
 
+
 /**
  * @program: getseektime
  * @description: 用来得到磁盘寻道时间
@@ -15,10 +16,10 @@ import java.util.Random;
  */
 public class getSeekTime {
 
-    public static String  path="F:\\test.txt";
-    public static long num=5000000L;
+    public static String  path="test.txt";
+    public static long num=3000000L;
 
-    public static int testnum=5000000;
+    public static int testnum=3000000;
 
 
     public static void main(String[] args) throws IOException {
@@ -30,14 +31,15 @@ public class getSeekTime {
     public static void write() throws IOException{
         String filePath="data/";
         DB db = Iq80DBFactory.factory.open((new File(filePath,"db/")),new Options().createIfMissing(true));
-        for(int i=0;i<num;i++){
-            byte[] bytes=(""+i).getBytes();
-            byte[] bytesValue="a".getBytes();
-            db.put(bytes,bytesValue);
+        byte[][] bytesTest=new byte[testnum][];
+        for(int i=0;i<num;i++) {
+            byte[] bytes = ("" + i).getBytes();
+            byte[] bytesValue = "a".getBytes();
+            db.put(bytes, bytesValue);
+            bytesTest[i] = bytesValue;
         }
-
         byte[] bytes=new byte[testnum];
-        db.put("test".getBytes(),bytes);
+        db.put("test".getBytes(),TypeExchangeUtil.toByteArray(bytesTest));
         db.close();
 
     }
